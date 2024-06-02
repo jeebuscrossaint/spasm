@@ -1,11 +1,10 @@
 #!/bin/bash
 # This script is used to build the editor. It will check for dependencies and build the binary.
-
 # --------------------- Dependencies "struct" ---------------------
 dependencies="nasm"
-objects="*.o spasm"
+objects="*.o main"
+source="*.asm"
 # -----------------------------------------------------------------
-
 # Check if dependencies are installed
 function dep_check() {
 for dep in $dependencies; do
@@ -15,23 +14,21 @@ for dep in $dependencies; do
         exit 1
     fi
 done }
-
 # Build the objects and final binary
 function build_bin() {
-    echo "booty"
+    echo "Building"
+    as -o main.o main.asm
 }
-
 function link_bin() {
-    echo "booty2"
+    echo "Linking"
+    ld -o main main.o
 }
-
 # Clean up the objects and binary
 function clean() {
     for obj in $objects; do
         rm -f "$obj"
     done
 }
-
 # Help function and help me why did I choose to write a hex editor in assembly
 function help_me() {
     echo "Usage: ./build.sh [clean | build | help]"
@@ -39,7 +36,6 @@ function help_me() {
     echo "build: Build the binary."
     echo "help: Display this help message."
 }
-
 # Main function / handler
 function main() {
     if [[ "$1" == "clean" || "$1" == "c" ]]; then
