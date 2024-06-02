@@ -1,52 +1,41 @@
 #!/bin/bash
-# This script is used to build the editor. It will check for dependencies and build the binary.
-# --------------------- Dependencies "struct" ---------------------
-dependencies="nasm"
-objects="*.o main"
-source="*.asm"
-# -----------------------------------------------------------------
-# Check if dependencies are installed
-function dep_check() {
-for dep in $dependencies; do
-    if ! command -v "$dep" &> /dev/null; then
-        echo "Hey there! This script currently requires: $dependencies"
-        echo "$dep is not installed. Please install it."
-        exit 1
+
+# Function to compile assembly files
+build() {
+
+    # Create bin directory if it doesn't exist
+    if [ ! -d bin ]; then
+        mkdir bin
     fi
-done }
-# Build the objects and final binary
-function build_bin() {
-    echo "Building"
-    as -o main.o main.asm
-}
-function link_bin() {
-    echo "Linking"
-    ld -o main main.o
-}
-# Clean up the objects and binary
-function clean() {
-    for obj in $objects; do
-        rm -f "$obj"
+
+    # Find all assembly files in src and compile them to objects in bin
+    for asm_file in src/*.asm; 
+    do
+        obj_file="bin/$(basename "${asm_file%.*}.o")"
+        echo "Assembling $asm_file to $obj_file"
+        as "$asm_file" -o "$obj_file"
     done
+
+    # Link all objects into a final binary
+    echo "Linking objects to create final binary"
+    ld bin/*.o -o spasm
 }
-# Help function and help me why did I choose to write a hex editor in assembly
-function help_me() {
-    echo "Usage: ./build.sh [clean | build | help]"
-    echo "clean: Remove all object files and the binary."
-    echo "build: Build the binary."
-    echo "help: Display this help message."
+
+# Function to clean build artifacts
+clean() {
+    echo "Cleaning build artifacts"
+    rm -f bin/*.o spasm a.out
 }
-# Main function / handler
-function main() {
-    if [[ "$1" == "clean" || "$1" == "c" ]]; then
+
+# Parse command line arguments
+case "$1" in
+    c)
         clean
-    elif [[ "$1" == "build" ]]; then
-        dep_check
-        build_bin
-        link_bin
-    elif [[ "$1" == "help" ]]; then
-        help_me
-    else
-        echo "Invalid argument. Please use 'clean', 'build', or 'help'."
-    fi
-}
+        ;;
+    clean)
+        clean
+        ;;
+    *)
+        build
+        ;;
+esac

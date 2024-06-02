@@ -1,18 +1,19 @@
-section .data
-    hello db 'Hello, World!',0 ; null terminated string
+.section .data
+hello:
+    .string "Hello, World!"
 
-section .text
-    global _start
+.section .text
+.globl _start
 
 _start:
-    ; write syscall
-    mov eax, 4 ; syscall number (sys_write)
-    mov ebx, 1 ; file descriptor (stdout)
-    mov ecx, hello ; message to write
-    mov edx, 13 ; message length
-    int 0x80 ; call kernel
+    # write syscall
+    movq $1, %rax     # syscall number (sys_write)
+    movq $1, %rdi     # file descriptor (stdout)
+    lea hello(%rip), %rsi # message to write
+    movq $13, %rdx    # message length
+    syscall           # call kernel
 
-    ; exit syscall
-    mov eax, 1 ; syscall number (sys_exit)
-    xor ebx, ebx ; exit code
-    int 0x80 ; call kernel
+    # exit syscall
+    movq $60, %rax    # syscall number (sys_exit)
+    xorq %rdi, %rdi   # exit code
+    syscall           # call kernel
