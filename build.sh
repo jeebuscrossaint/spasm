@@ -19,12 +19,15 @@ build() {
     # Link all objects into a final binary
     echo "Linking objects to create final binary"
     ld bin/*.o -o spasm
+
+    # build the c++ example file
+    g++ test/test.cpp -o test/test
 }
 
 # Function to clean build artifacts
 clean() {
     echo "Cleaning build artifacts"
-    rm -f bin/*.o spasm a.out
+    rm -f bin/*.o spasm a.out test/test
 }
 
 # Parse command line arguments
