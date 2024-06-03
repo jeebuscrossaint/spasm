@@ -1,16 +1,7 @@
-#!/bin/bash
-
-# Function to compile assembly files
+# Function to build the project
 build() {
-
-    # Create bin directory if it doesn't exist
-    if [ ! -d bin ]; then
-        mkdir bin
-    fi
-
-    # Find all assembly files in src and compile them to objects in bin
-    for asm_file in src/*.s; 
-    do
+    # Assemble each .s file into an .o file
+    for asm_file in src/*.s; do
         obj_file="bin/$(basename "${asm_file%.*}.o")"
         echo "Assembling $asm_file to $obj_file"
         as "$asm_file" -o "$obj_file"
@@ -30,15 +21,9 @@ clean() {
     rm -f bin/*.o spasm a.out test/test
 }
 
-# Parse command line arguments
-case "$1" in
-    c)
-        clean
-        ;;
-    clean)
-        clean
-        ;;
-    *)
-        build
-        ;;
-esac
+# Check if spasm binary exists
+if [ -f "./spasm" ]; then
+    clean
+else
+    build
+fi
