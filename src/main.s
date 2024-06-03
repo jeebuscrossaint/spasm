@@ -1,6 +1,13 @@
+
+
 .section .data
 hello:
     .string "Hello, World!"
+
+.include "src/editor.s"
+.include "src/display.s"
+.include "src/input.s"
+
 
 .section .text
 .globl _start

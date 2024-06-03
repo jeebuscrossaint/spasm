@@ -9,7 +9,7 @@ build() {
     fi
 
     # Find all assembly files in src and compile them to objects in bin
-    for asm_file in src/*.asm; 
+    for asm_file in src/*.s; 
     do
         obj_file="bin/$(basename "${asm_file%.*}.o")"
         echo "Assembling $asm_file to $obj_file"
